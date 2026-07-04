@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Restaurant AI Assistant</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .chatbot {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 24px;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+      padding: 32px;
+      width: 100%;
+      max-width: 520px;
+      text-align: center;
+    }
+    .chatbot h1 {
+      margin: 0 0 16px;
+      font-size: 2rem;
+      color: #333;
+    }
+    .chatbot p {
+      margin: 0 0 24px;
+      color: #555;
+    }
+    .chat-input {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .chat-input input {
+      flex: 1;
+      min-width: 220px;
+      padding: 14px 16px;
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      font-size: 1rem;
+      outline: none;
+    }
+    .chat-input button {
+      padding: 14px 24px;
+      border: none;
+      border-radius: 12px;
+      background: #ff6f61;
+      color: white;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+    .chat-input button:hover {
+      background: #ff4b3a;
+    }
+  </style>
+</head>
+<body>
+  <main class="chatbot">
+    <h1>Restaurant AI Assistant</h1>
+    <p>Ask about dinner options, special dishes, or menu recommendations.</p>
+    <div class="chat-input">
+      <div id="chat"></div>
+      <input type="text" id="userInput" placeholder="Ask me: What's on the dinner menu?" aria-label="Ask me what's on the dinner menu" />
+      <button type="button" onclick="sendMessage()">Send</button>
+    </div>
+  </main>
+  <script>
+    async function sendMessage(){
+        const input = document.getElementById('userInput').value;
+        const res = await fetch('/api/chat', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ input })
+        });
+        const data = await res.json();
+        const chatDiv = document.getElementById('chat');
+        chatDiv.innerHTML += `<p><strong>You:</strong> ${input}\n\n <strong>Bot:</strong> ${data.output}</p>\n\n`;
+        document.getElementById('userInput').value = '';
+    }
+  </script>
+</body>
+</html>
