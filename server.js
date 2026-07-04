@@ -59,6 +59,8 @@ const executor = await AgentExecutor.fromAgentAndTools({
   agent,
   tools: [getMenuTool],
   verbose: true,
+  maxIterations: 1,
+  returnIntermediateSteps: true,
 });
 
 app.get("/", (req, res) => {
@@ -76,13 +78,16 @@ app.post('/api/chat', async (req, res) => {
   try {
     const response = await executor.invoke({ input: userInput });
     console.log('Agent raw response:', response);
+    const data = response.intermediateSteps[0].observation;
 
     const output = typeof response.output === 'string'
       ? response.output
       : response.output?.text || response.output?.[0] || JSON.stringify(response.output || '');
 
-    if (output) {
+    if (output && output != 'Agent stopped due to max iterations') {
       return res.json({ output });
+    } else if(data != null){
+      return res.json({ output: data });
     }
 
     return res.status(500).json({ output: "Agent couldn't generate a valid answer." });
