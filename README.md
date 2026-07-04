@@ -1,40 +1,50 @@
 # AI Smart Restaurant
 
+A lightweight Express-based restaurant assistant that combines a simple chat-style frontend with a LangChain-powered backend. The app answers menu-related questions using Google Gemini and a structured menu tool.
+
 ## Overview
 
-`ai-smart-restaurant` is a simple Express-based restaurant assistant that serves a frontend chat UI and a backend AI/chat endpoint. The backend uses Google Generative AI via `@langchain/google-genai` and a small menu tool to answer meal-related questions.
+This project serves:
+- a browser-based chat UI at the root route
+- a backend endpoint for AI-assisted responses
+- a lightweight health check endpoint
+
+The backend uses:
+- Express for the web server
+- LangChain with Google Generative AI
+- a custom menu tool for breakfast, lunch, and dinner queries
+
+## Features
+
+- Simple restaurant-themed chat interface
+- Sends user input to the `/api/chat` endpoint
+- Uses a tool-calling agent to provide menu answers
+- Returns JSON output for easy integration with frontend or API clients
+- Includes a `/ping` endpoint for basic health monitoring
 
 ## Project Structure
 
 - `server.js`
-  - Main Express server entrypoint
+  - Main Express server entry point
   - Loads environment variables from `.env`
-  - Serves static frontend assets from `public/`
-  - Defines API routes:
-    - `GET /` serves the chat UI
-    - `POST /api/chat` accepts JSON input and returns AI-generated responses
-    - `GET /ping` health check endpoint
-  - Uses LangChain to wire a tool-calling agent and menu tool
+  - Serves static files from `public/`
+  - Defines the following routes:
+    - `GET /` → serves the frontend UI
+    - `POST /api/chat` → processes chat input and returns an AI-generated response
+    - `GET /ping` → returns a health check response
 
 - `public/`
-  - Static frontend files
-  - `index.html` contains the chat UI and JavaScript for sending requests to `/api/chat`
-
-- `.env`
-  - Stores environment variables for local development
-  - Required variable:
-    - `GOOGLE_API_KEY`
+  - Contains the frontend UI
+  - `index.html` includes the chat form and JavaScript that calls `/api/chat`
 
 - `package.json`
   - Project metadata and npm scripts
   - Uses ES modules via `"type": "module"`
 
-## Functionality
+## Requirements
 
-- Displays a restaurant chat interface in the browser
-- Sends user questions to `/api/chat`
-- Uses a LangChain agent with a structured tool to answer menu-related requests
-- Returns JSON responses containing `output`
+- Node.js
+- A Google Generative AI API key
 
 ## Setup
 
@@ -44,10 +54,11 @@
 npm install
 ```
 
-2. Create a `.env` file with a valid Google Generative AI API key:
+2. Create a `.env` file in the project root and add your Google API key:
 
 ```env
-GOOGLE_API_KEY=your_valid_api_key_here
+GOOGLE_API_KEY=your_google_api_key_here
+PORT=3000
 ```
 
 3. Start the server:
@@ -56,7 +67,7 @@ GOOGLE_API_KEY=your_valid_api_key_here
 npm start
 ```
 
-4. Open the app in your browser:
+4. Open the application in your browser:
 
 ```text
 http://localhost:3000
@@ -66,6 +77,8 @@ http://localhost:3000
 
 ### `POST /api/chat`
 
+Send a JSON request with a user prompt.
+
 Request body:
 
 ```json
@@ -74,7 +87,7 @@ Request body:
 }
 ```
 
-Successful response:
+Example success response:
 
 ```json
 {
@@ -84,7 +97,7 @@ Successful response:
 
 ### `GET /ping`
 
-Returns a JSON health check:
+Returns a simple health check response:
 
 ```json
 {
@@ -92,16 +105,8 @@ Returns a JSON health check:
 }
 ```
 
-## Troubleshooting
-
-- If `POST /api/chat` returns an error, verify that:
-  - `.env` exists and includes `GOOGLE_API_KEY`
-  - the API key is valid and authorized for `generativelanguage.googleapis.com`
-  - the server is running on port `3000`
-
-- If the frontend returns `Cannot POST /api/chat`, make sure the server is running and the route exists.
-
 ## Notes
 
-- This project currently relies on a Google Generative AI key. If the key is invalid or expired, the backend will return a 500 error.
-- The tool currently supports simple categories: `breakfast`, `lunch`, and `dinner`.
+- The app currently focuses on menu-related questions such as breakfast, lunch, and dinner.
+- The backend relies on a valid Google Generative AI key. If the key is missing or invalid, requests may fail with a server error.
+- The current menu responses are predefined in the server-side tool implementation.
